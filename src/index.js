@@ -10,8 +10,21 @@ const app = express();
 const PORT = process.env.PORT || 9999;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/crud-app';
 
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const morgan = require('morgan');
+const helmet = require('helmet');
+const routes = require('./routes');
+const swaggerDocs = require('./config/swagger');
+
+const app = express();
+const PORT = process.env.PORT || 9999;
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/crud-app';
+
 // Middleware
 app.use(cors());
+app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
