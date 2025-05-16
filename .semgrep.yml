@@ -1,0 +1,49 @@
+rules:
+  - id: express-open-redirect
+    pattern: |
+      $APP.$METHOD(..., function $FUNC($REQ, $RES, ...) {
+        ...
+        $RES.redirect($REQ.$QUERY);
+        ...
+      });
+    message: "Potential open redirect vulnerability. Validate and sanitize user input before redirecting."
+    languages: [javascript]
+    severity: WARNING
+
+  - id: mongodb-injection
+    pattern: |
+      $COLLECTION.find({$FIELD: $REQ.$QUERY})
+    message: "Potential MongoDB injection. Use parameterized queries or sanitize user input."
+    languages: [javascript]
+    severity: WARNING
+
+  - id: hardcoded-credentials
+    patterns:
+      - pattern-regex: "(password|secret|key|token|auth).*=.*['\"][a-zA-Z0-9_!@#$%^&*()-=+]{8,}['\"]"
+    message: "Hardcoded credentials detected. Use environment variables instead."
+    languages: [javascript]
+    severity: ERROR
+
+  - id: express-no-helmet
+    patterns-not:
+      - pattern: |
+          import helmet from 'helmet';
+          ...
+          $APP.use(helmet());
+      - pattern: |
+          const helmet = require('helmet');
+          ...
+          $APP.use(helmet());
+    message: "Consider using the 'helmet' package to set secure HTTP headers."
+    languages: [javascript]
+    severity: WARNING
+    paths:
+      include:
+        - "src/index.js"
+
+  - id: nosql-injection
+    pattern: |
+      $COLLECTION.$METHOD({$FIELD: {"$" + $OP: $VAL}})
+    message: "Potential NoSQL injection vulnerability. Validate user input."
+    languages: [javascript]
+    severity: WARNING
