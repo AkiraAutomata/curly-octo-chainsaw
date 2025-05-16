@@ -25,10 +25,15 @@ rules:
     severity: ERROR
 
   - id: express-no-helmet
-    pattern-not: |
-      import helmet from 'helmet';
-      ...
-      $APP.use(helmet());
+    patterns-not:
+      - pattern: |
+          import helmet from 'helmet';
+          ...
+          $APP.use(helmet());
+      - pattern: |
+          const helmet = require('helmet');
+          ...
+          $APP.use(helmet());
     message: "Consider using the 'helmet' package to set secure HTTP headers."
     languages: [javascript]
     severity: WARNING
